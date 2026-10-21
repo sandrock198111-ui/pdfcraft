@@ -2546,6 +2546,18 @@ impl PdfCraftApp {
 
     /// Add the PDFs, images and text files in `dir` to the Combine files list, as one undo step.
     #[cfg(not(target_arch = "wasm32"))]
+    /// Add files named on the command line (`--combine`, Explorer's "Combine files in PdfCraft")
+    /// to the Combine files list, in the order given, and show it.
+    #[cfg(not(target_arch = "wasm32"))]
+    pub fn combine_paths(&mut self, paths: &[String]) {
+        let paths: Vec<std::path::PathBuf> = paths.iter().map(std::path::PathBuf::from).collect();
+        if paths.is_empty() {
+            self.open_combine_tab();
+            return;
+        }
+        self.use_paths(crate::files::FilePurpose::Combine, &paths);
+    }
+
     pub(crate) fn add_folder_to_combine(&mut self, dir: &std::path::Path, recursive: bool) {
         let (paths, more) = combinable_in(dir, recursive);
         let folder = dir.file_name().map_or_else(|| dir.to_string_lossy().into_owned(), |n| n.to_string_lossy().into_owned());
