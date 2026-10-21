@@ -25,3 +25,11 @@ powershell -ExecutionPolicy Bypass -File ko-patch\package.ps1
 
 ## 빌드에 필요한 것
 Rust (rustup), Visual Studio 2022 Build Tools (C++), Python 3
+
+## 정식 설치 파일(MSI) 만들기
+추가로 필요: .NET SDK 8, `dotnet tool install --global wix --version 5.0.2`
+```powershell
+powershell -ExecutionPolicy Bypass -File packaging\windows\package.ps1 -Arch x64
+```
+결과: `dist\release\pdfcraft-<버전>-windows-x64.msi` (관리자 권한으로 설치, "설치된 앱"에서 제거).
+VC++ 런타임이 필요 없게 정적 링크로 빌드합니다 (전체 빌드 약 15분).
