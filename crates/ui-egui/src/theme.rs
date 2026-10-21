@@ -220,6 +220,8 @@ pub const SYSTEM_FALLBACK: &str = "system-fallback";
 pub const SYSTEM_DEVANAGARI_FALLBACK: &str = "system-devanagari-fallback";
 /// The name of the installed Telugu face [`installed_font_definitions`] may add.
 pub const SYSTEM_TELUGU_FALLBACK: &str = "system-telugu-fallback";
+/// The name of the installed Korean (Hangul) face [`installed_font_definitions`] may add.
+pub const SYSTEM_HANGUL_FALLBACK: &str = "system-hangul-fallback";
 /// The name of the installed Sinhala face [`installed_font_definitions`] may add.
 pub const SYSTEM_SINHALA_FALLBACK: &str = "system-sinhala-fallback";
 /// The name of the installed Tamil face [`installed_font_definitions`] may add.
@@ -253,6 +255,7 @@ pub fn installed_font_definitions(cjk: CjkPreference) -> FontDefinitions {
             (SYSTEM_TELUGU_FALLBACK, crate::system_fonts::telugu_fallback()),
             (SYSTEM_SINHALA_FALLBACK, crate::system_fonts::sinhala_fallback()),
             (SYSTEM_TAMIL_FALLBACK, crate::system_fonts::tamil_fallback()),
+            (SYSTEM_HANGUL_FALLBACK, crate::system_fonts::hangul_fallback()),
         ] {
             let Some(data) = data else { continue };
             fonts.font_data.insert(name.to_owned(), data);

@@ -147,7 +147,7 @@ fn plural_sl(n: u64) -> usize {
 }
 
 /// The registry. English first: it is the fallback and the source language.
-pub static LANGUAGES: [LangInfo; 24] = [
+pub static LANGUAGES: [LangInfo; 25] = [
     LangInfo { code: "en", name: "English", source: "", plural: plural_one_other, rtl: false, catalog: OnceLock::new() },
     LangInfo { code: "ja", name: "日本語", source: include_str!("ja.tsv"), plural: plural_none, rtl: false, catalog: OnceLock::new() },
     // Simplified Chinese; `zh`, `zh-CN`, `zh-SG` and `zh-Hans-*` locales resolve here (see `candidates`).
@@ -213,6 +213,10 @@ pub static LANGUAGES: [LangInfo; 24] = [
     // Norwegian Bokmål; every `nb-*` locale resolves here, and so do general Norwegian (`no-*`) and
     // Nynorsk (`nn-*`), which have no catalog of their own (see `candidates`).
     LangInfo { code: "nb", name: "Norsk bokmål", source: include_str!("nb.tsv"), plural: plural_one_other, rtl: false, catalog: OnceLock::new() },
+    // Korean; every `ko-*` locale (`ko-KR`, `ko_KR.UTF-8`) resolves here. Korean counts have one
+    // form, so `@plural` entries list a single form. Hangul is drawn from an installed system face
+    // (see `system_fonts::hangul_fallback`).
+    LangInfo { code: "ko", name: "한국어", source: include_str!("ko.tsv"), plural: plural_none, rtl: false, catalog: OnceLock::new() },
 ];
 
 impl LangInfo {

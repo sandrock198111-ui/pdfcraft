@@ -32,6 +32,8 @@ const TELUGU_PROBE: char = '\u{0C15}';
 const SINHALA_PROBE: char = '\u{0D9A}';
 /// Tamil letter ka (க): the face must have it to cover Tamil.
 const TAMIL_PROBE: char = '\u{0B95}';
+/// Hangul syllable ga (가): the face must have it to cover Korean.
+const HANGUL_PROBE: char = '\u{AC00}';
 /// 欢 (U+6B22): Simplified only, absent from the Japanese craft-fonts faces.
 const HANS_PROBE: char = '\u{6B22}';
 /// 說 (U+8AAA): Traditional only, absent from the Japanese craft-fonts faces.
@@ -101,6 +103,42 @@ pub fn sinhala_fallback() -> Option<Arc<FontData>> {
 pub fn tamil_fallback() -> Option<Arc<FontData>> {
     static CACHE: OnceLock<Option<Arc<FontData>>> = OnceLock::new();
     CACHE.get_or_init(|| script_fallback(&tamil_candidates(), TAMIL_PROBE)).clone()
+}
+
+/// The installed fallback face for Korean (Hangul), read once. `None` when it is turned off or no
+/// candidate is installed; Korean text (the Korean interface, file names) then shows as boxes.
+pub fn hangul_fallback() -> Option<Arc<FontData>> {
+    static CACHE: OnceLock<Option<Arc<FontData>>> = OnceLock::new();
+    CACHE
+        .get_or_init(|| {
+            if std::env::var_os("PDFCRAFT_SYSTEM_FONTS").is_some_and(|v| v == "0") {
+                return None;
+            }
+            // Korean system faces are often collections (Gulim, Apple SD Gothic Neo).
+            hangul_candidates().iter().find_map(|path| read(path, HANGUL_PROBE, MAX_HAN_BYTES))
+        })
+        .clone()
+}
+
+/// Well-known locations of Korean faces, best first. Noto CJK and Source Han are left out on
+/// purpose (AGENTS.md §1.1).
+fn hangul_candidates() -> Vec<PathBuf> {
+    if cfg!(windows) {
+        ["malgun.ttf", "gulim.ttc", "batang.ttc"].iter().map(|f| windows_fonts().join(f)).collect()
+    } else if cfg!(target_os = "macos") {
+        ["/System/Library/Fonts/AppleSDGothicNeo.ttc", "/System/Library/Fonts/Supplemental/AppleGothic.ttf"].iter().map(PathBuf::from).collect()
+    } else {
+        unix_fonts(&[
+            "truetype/nanum/NanumGothic.ttf",
+            "nanum/NanumGothic.ttf",
+            "naver-nanum/NanumGothic.ttf",
+            "nanum-gothic-fonts/NanumGothic.ttf",
+            "truetype/unfonts-core/UnDotum.ttf",
+            "un-core/UnDotum.ttf",
+            "truetype/baekmuk/dotum.ttf",
+            "baekmuk-ttf/dotum.ttf",
+        ])
+    }
 }
 
 fn script_fallback(candidates: &[PathBuf], probe: char) -> Option<Arc<FontData>> {
