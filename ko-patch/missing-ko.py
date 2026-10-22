@@ -11,6 +11,8 @@ import glob
 import os
 import sys
 
+sys.stdout.reconfigure(encoding='utf-8')
+
 I18N = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'crates', 'ui-egui', 'src', 'i18n')
 
 
